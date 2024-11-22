@@ -7,8 +7,35 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
-  <h1>Prubea</h1>
-  <div id="data"></div>
+ <h1>CRUD Estudiantes</h1>
+
+    <!-- Formulario para crear/actualizar estudiantes -->
+    <form id="estudiante-form">
+        <label for="cedula">Cédula:</label>
+        <input type="text" id="cedula" name="cedula" required>
+
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required>
+
+        <input type="hidden" id="id" name="id">
+
+        <button type="submit" id="guardar-btn">Guardar</button>
+        <button type="button" id="cancelar-btn" style="display: none;">Cancelar</button>
+    </form>
+
+    <!-- Tabla para mostrar los estudiantes -->
+    <table id="estudiantes-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Cédula</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 
   <script>
     const supabaseUrl = 'https://fmdairgelzsgeryjlhyo.supabase.co'
