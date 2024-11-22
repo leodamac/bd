@@ -1,4 +1,4 @@
-      const supabaseUrl = 'https://fmdairgelzsgeryjlhyo.supabase.co'
+9      const supabaseUrl = 'https://fmdairgelzsgeryjlhyo.supabase.co'
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtZGFpcmdlbHpzZ2VyeWpsaHlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMDU1ODMsImV4cCI6MjA0Nzg4MTU4M30.t2EzyLJgkRzUe6gM5j2tIfeD0rLA3Sxy_r0Ej28Qp-g'   
 
     // Inicializar el cliente de Supabase
@@ -30,9 +30,9 @@
           estudiantesTableBody.innerHTML = '';
           estudiantes.forEach(estudiante => {
             const row = document.createElement('tr');
-            row.setAttribute('data-id', estudiante.Id);
+            row.setAttribute('data-id', estudiante.id);
             row.innerHTML = `
-              <td>${estudiante.Id}
+              <td>${estudiante.id}
               ${estudiante.cedula}</td>
               <td>${estudiante.nombre}</td>
               <td class="acciones">
@@ -67,7 +67,7 @@
               const { data, error } = await supabaseClient
               .from('Estudiante')
               .update({ cedula, nombre })
-              .eq('Id', id);
+              .eq('id', id);
 
                 if (error) {
                   console.error('Error al actualizar estudiante:', error);
@@ -129,8 +129,8 @@
           // Función para cargar los datos del estudiante en el formulario
         function editarEstudiante(row){
             const id = row.getAttribute('data-id');
-            const cedula = row.querySelector('td:nth-child(2)').textContent;
-            const nombre = row.querySelector('td:nth-child(3)').textContent;
+            const cedula = row.querySelector('td:nth-child(3)').textContent;
+            const nombre = row.querySelector('td:nth-child(4)').textContent;
 
             document.getElementById('id').value = id;
             document.getElementById('cedula').value = cedula;
