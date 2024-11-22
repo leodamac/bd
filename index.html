@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Proyecto BD</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script type="text/javascript" src="script.js"></script>
 </head>
 <body>
  <h1>CRUD Estudiantes</h1>
@@ -36,32 +38,5 @@
         <tbody>
         </tbody>
     </table>
-
-  <script>
-    const supabaseUrl = 'https://fmdairgelzsgeryjlhyo.supabase.co'
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtZGFpcmdlbHpzZ2VyeWpsaHlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIzMDU1ODMsImV4cCI6MjA0Nzg4MTU4M30.t2EzyLJgkRzUe6gM5j2tIfeD0rLA3Sxy_r0Ej28Qp-g'   
-
-    // Inicializar el cliente de Supabase
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-
-    // Obtener datos de la tabla "products"
-    async function fetchProducts() {
-      const { data, error } = await supabaseClient.from('Estudiante').select('*');
-      if (error) {
-        console.error("Error al obtener datos:", error);
-        return;
-      }
-      console.log(data);
-
-      // Renderizar los datos en el frontend
-      const dataDiv = document.getElementById('data');
-      dataDiv.innerHTML = data.map(estudiante => `
-        <div>
-          <h3>${estudiante.nombre}</h3>
-        <p>Cedula: ${estudiante.cedula}</p>
-        </div> `).join(''); 
-  }
-  fetchProducts()
-  </script>
 </body>
 </html>
