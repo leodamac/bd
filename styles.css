@@ -1,27 +1,61 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
 
-form {
-    margin-bottom: 20px;
-}
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-input, button {
-    margin: 5px;
-    padding: 10px;
-}
+        form {
+            margin-bottom: 20px;
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
+        input[type="text"] {
+            width: 200px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
 
-th {
-    background-color: #f4f4f4;
-}
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        button:hover{
+            background-color: #367c39;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+        .acciones{
+            display: flex;
+            gap: 5px;
+        }
+        .acciones button{
+            padding: 5px 10px;
+        }
+        .edit-mode{
+            background-color: #2980b9;
+        }
