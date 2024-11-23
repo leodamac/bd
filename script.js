@@ -32,8 +32,8 @@
             const row = document.createElement('tr');
             row.setAttribute('data-id', estudiante.id);
             row.innerHTML = `
-              <td>${estudiante.id}
-              ${estudiante.cedula}</td>
+              <td>${estudiante.id}</td>
+              <td>${estudiante.cedula}</td>
               <td>${estudiante.nombre}</td>
               <td class="acciones">
                 <button class="editar-btn">Editar</button>
@@ -129,8 +129,8 @@
           // Función para cargar los datos del estudiante en el formulario
         function editarEstudiante(row){
             const id = row.getAttribute('data-id');
-            const cedula = row.querySelector('td:nth-child(3)').textContent;
-            const nombre = row.querySelector('td:nth-child(4)').textContent;
+            const cedula = row.querySelector('td:nth-child(2)').textContent;
+            const nombre = row.querySelector('td:nth-child(3)').textContent;
 
             document.getElementById('id').value = id;
             document.getElementById('cedula').value = cedula;
