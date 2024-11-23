@@ -32,7 +32,6 @@
             const row = document.createElement('tr');
             row.setAttribute('data-id', estudiante.id);
             row.innerHTML = `
-              <td>${estudiante.id}</td>
               <td>${estudiante.cedula}</td>
               <td>${estudiante.nombre}</td>
               <td class="acciones">
@@ -98,7 +97,7 @@
                 const { data, error } = await supabaseClient
                     .from('Estudiante')
                     .delete()
-                    .eq('Id', id);
+                    .eq('id', id);
 
                 if (error) {
                     console.error('Error al eliminar estudiante:', error);
@@ -132,7 +131,6 @@
             const cedula = row.querySelector('td:nth-child(2)').textContent;
             const nombre = row.querySelector('td:nth-child(3)').textContent;
 
-            document.getElementById('id').value = id;
             document.getElementById('cedula').value = cedula;
             document.getElementById('nombre').value = nombre;
             guardarBtn.textContent = 'Actualizar';
