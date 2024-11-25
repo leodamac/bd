@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docente</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles_docente.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supa.js"></script>
+</head>
+<body>
+  <div>
+    <h1>Bienvenido, Docente</h1>
+    <p>Aquí encontrarás tus cursos y actividades asignadas.</p>
+
+    <!-- Sección de Cursos -->
+    <div id="cursos"></div>
+
+    <!-- Sección de Tareas -->
+    <div id="tareas" style="display: none;">
+      <h3>Tareas Asignadas</h3>
+      <div id="crear-actividad" style="display: none;">
+        <h3>Crear Nueva Actividad</h3>
+        <label for="titulo-actividad">Título:</label>
+        <input type="text" id="titulo-actividad" required>
+        <br>
+        <label for="descripcion-actividad">Descripción:</label>
+        <textarea id="descripcion-actividad" required></textarea>
+        <br>
+        <label for="fecha-actividad">Fecha:</label>
+        <input type="date" id="fecha-actividad" required>
+        <br>
+        <button onclick="crearActividad()">Crear Actividad</button>
+      </div>
+      <div id="lista-tareas"></div>
+    </div>
+
+    <!-- Sección de Estudiantes -->
+    <div id="estudiantes" style="display: none;">
+      <h3>Estudiantes</h3>
+      <div id="lista-estudiantes"></div>
+    </div>
+
+    <button id="logout-btn">Cerrar sesión</button>
+  </div>
+  <script type="module" src="sesion.js"></script>
+  <script src="spbs.js"></script>
+  <script>
+  
+	async function obtenerIdDocente(userId) {
+	  const { data, error } = await supabaseClient
+		.from("Docente")
+		.select("id")
+		.eq("id_usuario", userId)
+		.single();
+
+	  if (error || !data) {
+		console.error("Error al obtener id_docente:", error?.message || "No se encontró el docente.");
+		return null;
+	  }
+
+	  return data.id;
+	}
+	
+async function obtenerCursosDocente(userId) {
+
+const { data: cursos, error } = await supabaseClient
+  .rpc('get_materia_info', { usuario_id: userId});
+
+
+console.log('Cursos obtenidos:', cursos);
+  if (error) {
+    console.error('Error al obtener cursos:', error.message);
+    return [];
+  }
+
+  // Llamar a la función para renderizar los cursos
+	  mostrarCursos(cursos);
+	  return cursos;
+	}
+
+
+    // Función para mostrar los cursos en tarjetas
+	function mostrarCursos(cursos) {
+	  const cursosDiv = document.getElementById('cursos');
+	  cursosDiv.innerHTML = ''; // Limpiar la lista
+
+	  cursos.forEach(curso => {
+		const cursoCard = document.createElement('div');
+		cursoCard.classList.add('card');
+		cursoCard.innerHTML = `
+		  <h3>${curso.materia_nombre}</h3>
+		  <p>Paralelo: ${curso.paralelo}</p>
+		  <p>Grado: ${curso.grado}</p>
+		  <button class="ver-tareas" data-curso-id="${curso.id_curso}">Ver Tareas</button>
+		  <button class="ver-estudiantes" data-curso-id="${curso.id_curso}">Ver Estudiantes</button>
+		`;
+
+		// Evento de clic para ver tareas
+		cursoCard.querySelector('.ver-tareas').addEventListener('click', () => {
+		  mostrarTareas(curso.id_curso);
+		});
+
+		// Evento de clic para ver estudiantes
+		cursoCard.querySelector('.ver-estudiantes').addEventListener('click', () => {
+		  mostrarEstudiantes(curso.id_curso);
+		});
+
+		cursosDiv.appendChild(cursoCard);
+	  });
+	}
+
+    // Función para mostrar las tareas asignadas
+    async function mostrarTareas(idCurso) {
+      const { data: tareas, error } = await supabaseClient
+        .from('Materia_Actividad_Docente')
+        .select(`
+          "Actividad" (
+            id,
+            titulo,
+            fecha
+          )
+        `)
+        .eq('id_materia', idCurso);  // Relaciona correctamente la materia con el curso
+
+      if (error) {
+        console.error('Error al obtener tareas:', error.message);
+        return;
+      }
+
+      // Mostrar tareas en la interfaz
+      const tareasDiv = document.getElementById('tareas');
+      tareasDiv.style.display = 'block';
+      tareasDiv.innerHTML = '<h3>Tareas Asignadas</h3>';  // Limpiar y mostrar título
+
+      tareas.forEach(tarea => {
+        const tareaDiv = document.createElement('div');
+        tareaDiv.classList.add('tarea');
+        tareaDiv.innerHTML = `
+          <h4>${tarea.actividad.titulo}</h4>
+          <p>Fecha: ${tarea.actividad.fecha}</p>
+        `;
+        tareasDiv.appendChild(tareaDiv);
+      });
+
+      // Mostrar formulario para crear nueva actividad
+      const crearActividadForm = document.getElementById('crear-actividad');
+      crearActividadForm.style.display = 'block';
+      crearActividadForm.dataset.cursoId = idCurso;
+    }
+
+    // Función para crear una nueva actividad
+	async function crearActividad(fecha, titulo, idTipoActividad, idMateria) {
+	  // Obtener el ID del docente
+	  const idDocente = await obtenerIdDocente();
+	  if (!idDocente) {
+		alert('No se pudo obtener el ID del docente.');
+		return;
+	  }
+
+	  // Insertar la nueva actividad
+	  const { data: actividad, error: actividadError } = await supabase
+		.from('Actividad')
+		.insert([
+		  { fecha, titulo, id_tipo_actividad: idTipoActividad }
+		])
+		.select();
+
+	  if (actividadError) {
+		console.error('Error al crear actividad:', actividadError.message);
+		alert('Hubo un problema al crear la actividad.');
+		return;
+	  }
+
+	  const actividadId = actividad[0].id;
+
+	  // Asociar la actividad con la materia y el docente
+	  const { error: asociarError } = await supabase
+		.from('Materia_Actividad_Docente')
+		.insert([
+		  { id_materia: idMateria, id_actividad: actividadId, id_docente: idDocente }
+		]);
+
+	  if (asociarError) {
+		console.error('Error al asociar actividad con la materia:', asociarError.message);
+		alert('Hubo un problema al asociar la actividad con la materia.');
+		return;
+	  }
+
+	  alert('Actividad creada exitosamente.');
+	}
+
+
+    // Función para mostrar los estudiantes del curso
+    async function mostrarEstudiantes(idCurso) {
+      const { data: estudiantes, error } = await supabaseClient
+        .from('Estudiante')
+        .select(`
+          id_usuario,
+          "Usuario" (
+            nombres,
+            apellidos
+          )
+        `)
+        .eq('id_curso', idCurso);
+
+      if (error) {
+        console.error('Error al obtener estudiantes:', error.message);
+        return;
+      }
+
+      const estudiantesDiv = document.getElementById('estudiantes');
+      estudiantesDiv.style.display = 'block';
+      estudiantesDiv.innerHTML = '<h3>Estudiantes</h3>';
+
+      estudiantes.forEach(estudiante => {
+        const estudianteDiv = document.createElement('div');
+        estudianteDiv.classList.add('estudiante');
+        estudianteDiv.innerHTML = `
+          <h4>${estudiante.usuario.nombres} ${estudiante.usuario.apellidos}</h4>
+          <button class="ver-actividades" data-estudiante-id="${estudiante.id_usuario}">Ver Actividades</button>
+        `;
+        estudianteDiv.querySelector('.ver-actividades').addEventListener('click', () => {
+          mostrarActividadesEstudiante(estudiante.id_usuario);
+        });
+        estudiantesDiv.appendChild(estudianteDiv);
+      });
+    }
+
+    // Función para mostrar las actividades asignadas a un estudiante
+    async function mostrarActividadesEstudiante(idEstudiante) {
+      const { data: actividades, error } = await supabaseClient
+        .from('Actividad_Estudiante')
+        .select(`
+          "Actividad" (
+            titulo,
+            calificacion,
+            observacion
+          )
+        `)
+        .eq('id_estudiante', idEstudiante);
+
+      if (error) {
+        console.error('Error al obtener actividades:', error.message);
+        return;
+      }
+
+      const actividadesDiv = document.getElementById('actividades-estudiante');
+      actividadesDiv.innerHTML = '<h3>Actividades del Estudiante</h3>';
+
+      actividades.forEach(actividad => {
+        const actividadDiv = document.createElement('div');
+        actividadDiv.classList.add('actividad');
+        actividadDiv.innerHTML = `
+          <h4>${actividad.actividad.titulo}</h4>
+          <p>Calificación: ${actividad.actividad.calificacion}</p>
+          <p>Observación: ${actividad.actividad.observacion}</p>
+        `;
+        actividadesDiv.appendChild(actividadDiv);
+      });
+    }
+
+    // Función de Logout
+    async function logout() {
+      const { error } = await supabaseClient.auth.signOut();
+
+      if (error) {
+        console.error('Error al cerrar sesión:', error.message);
+        alert('Hubo un error al cerrar sesión.');
+      } else {
+        console.log('Sesión cerrada correctamente');
+        window.location.href = 'index.html';  // Redirigir a la página de login
+      }
+    }
+
+	async function init() {
+	  // Obtener la sesión actual
+	  const { data: session, error } = await supabaseClient.auth.getSession();
+
+	supabaseClient.auth.onAuthStateChange((event, session) => {
+	  console.log("Estado de la autenticación:", event);
+	  if (session && session.user) {
+		console.log("Usuario autenticado:", session.user);
+		obtenerCursosDocente(session.user.id);
+	  } else {
+		console.log("No hay sesión activa.");
+	  }
+	  
+	});
+	}
+
+	// Evento de cierre de sesión
+    document.getElementById('logout-btn').addEventListener('click', logout);
+	init();
+
+  </script>
+</body>
+</html>

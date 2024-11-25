@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estudiante</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supa.js"></script>
+</head>
+<body>
+  <div>
+  <h1>Bienvenido, Estudiante</h1>
+  <p>Aquí encontrarás tus actividades enviadas por los docentes.</p>
+  <!-- Más contenido específico para estudiantes -->
+  <button id="logout-btn">Cerrar sesión</button>
+   </div>
+  <script type="module" src="sesion.js"></script>
+  <script src="spbs.js"></script>
+  <script>
+	async function logout() {
+	  const { error } = await supabaseClient.auth.signOut();
+
+	  if (error) {
+		console.error('Error al cerrar sesión:', error.message);
+		alert('Hubo un error al cerrar sesión.');
+	  } else {
+		console.log('Sesión cerrada correctamente');
+		window.location.href = 'index.html';  // Redirigir a la página de login
+	  }
+	}
+
+	// Evento de cierre de sesión
+	document.getElementById('logout-btn').addEventListener('click', logout);
+  </script>
+</body>
+</html>

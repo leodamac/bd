@@ -1,40 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" type="text/css" href="styles.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Proyecto BD</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <title>Inicio de Sesión</title>
+  <link rel="stylesheet" href="styles_index.css">
 </head>
 <body>
- <h1>Datos Estudiantes Iniciakles</h1>
-    <!-- Formulario para crear/actualizar estudiantes -->
-    <form id="estudiante-form">
-        <label for="cedula">Cédula:</label>
-        <input type="text" id="cedula" name="cedula" required>
+  <div id="login-form">
+    <h1>Iniciar Sesión</h1>
+    <input type="email" id="email" placeholder="Correo electrónico" />
+    <input type="password" id="password" placeholder="Contraseña" />
+    <button id="login-btn">Iniciar Sesión</button>
+  </div>
 
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required>
+  <div id="app"></div>
 
-        <input type="hidden" id="id" name="id">
-
-        <button type="submit" id="guardar-btn">Guardar</button>
-        <button type="button" id="cancelar-btn" style="display: none;">Cancelar</button>
-    </form>
-
-    <!-- Tabla para mostrar los estudiantes -->
-    <table id="estudiantes-table">
-        <thead>
-            <tr>
-                <th>Cédula</th>
-                <th>Nombre</th>
-                <th>Accioness</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-<script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supa.js"></script>
+  <script src="spbs.js"></script>
+  <script>
+    document.getElementById('login-btn').addEventListener('click', () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      login(email, password);
+    });
+  </script>
 </body>
 </html>
