@@ -91,8 +91,8 @@ console.log('Cursos obtenidos:', cursos);
 		cursoCard.classList.add('card');
 		cursoCard.innerHTML = `
 		  <h3>${curso.materia_nombre}</h3>
-		  <p>Paralelo: ${curso.paralelo}</p>
-		  <p>Grado: ${curso.grado}</p>
+		  <p>Paralelo: ${curso.paralelo_nombre}</p>
+		  <p>Grado: ${curso.grado_nombre}</p>
 		  <button class="ver-tareas" data-curso-id="${curso.id_curso}">Ver Tareas</button>
 		  <button class="ver-estudiantes" data-curso-id="${curso.id_curso}">Ver Estudiantes</button>
 		`;
