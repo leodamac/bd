@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reglas y Gestión</title>
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="contenedor">
+    <h1>Gestión de Reglas</h1>
+    <p>Seleccione una regla para visualizar su funcionalidad.</p>
+
+    <!-- Sección de reglas -->
+    <div class="reglas">
+      <div class="regla">
+        <h2>Regla 1 y 2: Estudiantes y Notas</h2>
+        <p>Gestiona las notas de los estudiantes y programa citas con representantes.</p>
+        <button onclick="mostrarPopupEstudiantes()">Ver Regla 1 y 2</button>
+      </div>
+
+      <div class="regla">
+        <h2>Regla 3: Citas Programadas</h2>
+        <p>Visualiza y actualiza el estado de las citas programadas.</p>
+        <button onclick="mostrarCitasProgramadas()">Ver Regla 3</button>
+      </div>
+
+      <div class="regla">
+        <h2>Regla 4: Estudiantes por Curso</h2>
+        <p>Muestra los estudiantes agrupados por cursos y tutores.</p>
+        <button onclick="mostrarRegla4()">Ver Cursos y Estudiantes</button>
+      </div>
+    </div>
+  </div>
+
+<div id="popup" class="popup oculto">
+  <div class="popup-contenido">
+    <h3 id="titulo-popup"></h3>
+    <div id="contenido-popup"></div>
+    <button onclick="cerrarPopup()">Cerrar</button>
+  </div>
+</div>
+
+  <script src="script_p.js"></script>
+</body>
+</html>
