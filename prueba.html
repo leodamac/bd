@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Estudiantes</title>
+  <style>
+    /* Estilos del Pop-up */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.3s, opacity 0.3s;
+    }
+
+    .popup .popup-contenido {
+      background: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      width: 400px;
+      text-align: center;
+    }
+
+    .popup ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .popup ul li {
+      margin: 10px 0;
+    }
+
+    .popup.visible {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 8px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Prueba de Pop-up</h1>
+  <button id="mostrarPopup">Mostrar Lista de Estudiantes</button>
+
+  <div id="popupEstudiantes" class="popup">
+    <div class="popup-contenido">
+      <h3>Lista de Estudiantes</h3>
+      <ul id="listaEstudiantes">
+        <!-- Aquí se llenará dinámicamente la lista -->
+      </ul>
+      <button id="cerrarPopup">Cerrar</button>
+    </div>
+  </div>
+
+  <script>
+      // Referencias a los elementos
+      const popup = document.getElementById('popupEstudiantes');
+      const listaEstudiantes = document.getElementById('listaEstudiantes');
+      const btnCerrarPopup = document.getElementById('cerrarPopup');
+      const btnMostrarPopup = document.getElementById('mostrarPopup');
+
+      // Función para mostrar el pop-up
+      function mostrarPopupEstudiantes(estudiantes) {
+        // Limpiar la lista antes de llenarla
+        listaEstudiantes.innerHTML = '';
+
+        // Agregar los estudiantes a la lista
+        estudiantes.forEach(estudiante => {
+          const li = document.createElement('li');
+          li.textContent = `${estudiante.nombres} ${estudiante.apellidos}`;
+          listaEstudiantes.appendChild(li);
+        });
+
+        // Mostrar el pop-up
+        popup.classList.add('visible');
+      }
+
+      // Función para cerrar el pop-up
+      function cerrarPopup() {
+        popup.classList.remove('visible');
+      }
+
+      // Evento para mostrar el pop-up con estudiantes de prueba
+      btnMostrarPopup.addEventListener('click', () => {
+        const estudiantes = [
+          { nombres: 'Juan', apellidos: 'Pérez' },
+          { nombres: 'Ana', apellidos: 'García' },
+          { nombres: 'Carlos', apellidos: 'López' }
+        ];
+        mostrarPopupEstudiantes(estudiantes);
+      });
+
+      // Evento para cerrar el pop-up
+      btnCerrarPopup.addEventListener('click', cerrarPopup);
+  </script>
+</body>
+</html>

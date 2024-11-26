@@ -10,7 +10,7 @@
   <script src="supa.js"></script>
 </head>
 <body>
-  <div>
+  <div class="contenedor-centro">
     <h1>Bienvenido, Docente</h1>
     <p>Aquí encontrarás tus cursos y actividades asignadas.</p>
 
@@ -36,13 +36,19 @@
       <div id="lista-tareas"></div>
     </div>
 
-    <!-- Sección de Estudiantes -->
-    <div id="estudiantes" style="display: none;">
-      <h3>Estudiantes</h3>
-      <div id="lista-estudiantes"></div>
+
+    <div id="popupEstudiantes" class="popup">
+      <div class="popup-contenido">
+        <h3 id="popupTitulo">Lista de Estudiantes</h3>
+        <ul id="listaEstudiantes">
+          <!-- Aquí se llenará dinámicamente la lista -->
+        </ul>
+        <button id="cerrarPopup">Cerrar</button>
+      </div>
     </div>
 
     <button id="logout-btn">Cerrar sesión</button>
+
   </div>
   <script type="module" src="sesion.js"></script>
   <script src="spbs.js"></script>
@@ -66,7 +72,7 @@
 async function obtenerCursosDocente(userId) {
 
 const { data: cursos, error } = await supabaseClient
-  .rpc('get_materia_info', { usuario_id: userId});
+  .rpc('get_materias_docente', { usuario_id: userId});
 
 
 console.log('Cursos obtenidos:', cursos);
@@ -104,7 +110,7 @@ console.log('Cursos obtenidos:', cursos);
 
 		// Evento de clic para ver estudiantes
 		cursoCard.querySelector('.ver-estudiantes').addEventListener('click', () => {
-		  mostrarEstudiantes(curso.id_curso);
+		  mostrarEstudiantes(curso);
 		});
 
 		cursosDiv.appendChild(cursoCard);
@@ -193,39 +199,16 @@ console.log('Cursos obtenidos:', cursos);
 
 
     // Función para mostrar los estudiantes del curso
-    async function mostrarEstudiantes(idCurso) {
+    async function mostrarEstudiantes(curso) {
+      const idCurso = curso.id_curso
       const { data: estudiantes, error } = await supabaseClient
-        .from('Estudiante')
-        .select(`
-          id_usuario,
-          "Usuario" (
-            nombres,
-            apellidos
-          )
-        `)
-        .eq('id_curso', idCurso);
+      .rpc('get_estudiantes_curso', { id_curso_consulta: idCurso});
 
       if (error) {
         console.error('Error al obtener estudiantes:', error.message);
         return;
       }
-
-      const estudiantesDiv = document.getElementById('estudiantes');
-      estudiantesDiv.style.display = 'block';
-      estudiantesDiv.innerHTML = '<h3>Estudiantes</h3>';
-
-      estudiantes.forEach(estudiante => {
-        const estudianteDiv = document.createElement('div');
-        estudianteDiv.classList.add('estudiante');
-        estudianteDiv.innerHTML = `
-          <h4>${estudiante.usuario.nombres} ${estudiante.usuario.apellidos}</h4>
-          <button class="ver-actividades" data-estudiante-id="${estudiante.id_usuario}">Ver Actividades</button>
-        `;
-        estudianteDiv.querySelector('.ver-actividades').addEventListener('click', () => {
-          mostrarActividadesEstudiante(estudiante.id_usuario);
-        });
-        estudiantesDiv.appendChild(estudianteDiv);
-      });
+      mostrarPopupEstudiantes(estudiantes, curso);
     }
 
     // Función para mostrar las actividades asignadas a un estudiante
@@ -262,7 +245,7 @@ console.log('Cursos obtenidos:', cursos);
     }
 
     // Función de Logout
-    async function logout() {
+  async function logout() {
       const { error } = await supabaseClient.auth.signOut();
 
       if (error) {
@@ -273,6 +256,35 @@ console.log('Cursos obtenidos:', cursos);
         window.location.href = 'index.html';  // Redirigir a la página de login
       }
     }
+
+  function mostrarPopupEstudiantes(estudiantes, curso) {
+  const popup = document.getElementById('popupEstudiantes');
+  const listaEstudiantes = document.getElementById('listaEstudiantes');
+  const tituloPopUp = document.getElementById("popupTitulo");
+  tituloPopUp.innerHTML = "Lista de estudiantes de "+curso.grado_nombre+curso.paralelo_nombre;
+  // Limpia la lista para evitar duplicados
+  listaEstudiantes.innerHTML = '';
+
+  // Rellena la lista con los estudiantes
+  estudiantes.forEach(estudiante => {
+    const li = document.createElement('li');
+    li.textContent = `${estudiante.nombres} ${estudiante.apellidos}`;
+    listaEstudiantes.appendChild(li);
+  });
+
+  // Muestra el pop-up
+  popup.classList.remove('oculto');
+  popup.classList.add('visible');
+}
+
+// Función para cerrar el pop-up
+function cerrarPopup() {
+  const popup = document.getElementById('popupEstudiantes');
+  popup.classList.remove('visible');
+  popup.classList.add('oculto');
+}
+
+
 
 	async function init() {
 	  // Obtener la sesión actual
@@ -289,6 +301,9 @@ console.log('Cursos obtenidos:', cursos);
 	  
 	});
 	}
+
+  // Evento para cerrar el pop-up
+  document.getElementById('cerrarPopup').addEventListener('click', cerrarPopup);
 
 	// Evento de cierre de sesión
     document.getElementById('logout-btn').addEventListener('click', logout);
