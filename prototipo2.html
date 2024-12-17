@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reglas y Gestión</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+	<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 20px;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-top: 20px;
+			}
+			table, th, td {
+				border: 1px solid #ddd;
+			}
+			th, td {
+				padding: 8px;
+				text-align: left;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Consultar Notas por Actividad</h1>
+		
+		<form id="actividadForm">
+			<label for="tipoActividad">Tipo de Actividad:</label>
+			<input type="text" id="tipoActividad" name="tipoActividad" placeholder="Ejemplo: Examen Parcial o ALL" required>
+			<button type="submit">Obtener Notas</button>
+		</form>
+
+		<div id="resultados">
+			<h2>Resultados:</h2>
+			<table id="resultadosTabla">
+				<thead>
+					<tr>
+						<th>Nombre</th>
+						<th>Apellido</th>
+						<th>Actividad</th>
+						<th>Calificación</th>
+						<th>Observación</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- Los resultados se llenarán aquí -->
+				</tbody>
+			</table>
+		</div>
+
+  <script src="supa.js"></script>
+  <script>
+	document.getElementById('actividadForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const tipoActividad = document.getElementById('tipoActividad').value;
+
+            // Llama a la función de Supabase
+            const { data, error } = await supabaseClient.rpc('obtener_notas_por_actividad', { tipo_actividad: tipoActividad });
+
+            // Muestra los errores si ocurren
+            if (error) {
+                console.error('Error al obtener las notas:', error);
+                alert('Error al obtener las notas');
+                return;
+            }
+
+            // Llena la tabla con los resultados
+            const tabla = document.getElementById('resultadosTabla').getElementsByTagName('tbody')[0];
+            tabla.innerHTML = ''; // Limpiar la tabla antes de agregar nuevos datos
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.nombres}</td>
+                    <td>${row.apellidos}</td>
+                    <td>${row.actividad_titulo}</td>
+                    <td>${row.calificacion}</td>
+                    <td>${row.observacion}</td>
+                `;
+                tabla.appendChild(tr);
+            });
+        });
+    </script>
+</body>
+</html>
