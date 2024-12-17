@@ -8,40 +8,53 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="contenedor">
-    <h1>Gestión de Reglas</h1>
-    <p>Seleccione una regla para visualizar su funcionalidad.</p>
+  <h1>Calificaciones de Lección</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Nombres</th>
+        <th>Apellidos</th>
+        <th>Calificación</th>
+        <th>Observación</th>
+      </tr>
+    </thead>
+    <tbody id="tabla-calificaciones">
+      <!-- Aquí se insertarán las filas de datos -->
+    </tbody>
+  </table>
+  <script src="supa.js"></script>
+  <script>
+	async function obtenerCalificacionesLeccion() {
+	  const { data, error } = await supabase.rpc('obtener_calificaciones_leccion'); // Llama a la función SQL
 
-    <!-- Sección de reglas -->
-    <div class="reglas">
-      <div class="regla">
-        <h2>Regla 1 y 2: Estudiantes y Notas</h2>
-        <p>Gestiona las notas de los estudiantes y programa citas con representantes.</p>
-        <button onclick="mostrarPopupEstudiantes()">Ver Regla 1 y 2</button>
-      </div>
+	  if (error) {
+		console.error('Error al obtener calificaciones:', error);
+		return;
+	  }
 
-      <div class="regla">
-        <h2>Regla 3: Citas Programadas</h2>
-        <p>Visualiza y actualiza el estado de las citas programadas.</p>
-        <button onclick="mostrarCitasProgramadas()">Ver Regla 3</button>
-      </div>
+	  // Obtener referencia al cuerpo de la tabla en HTML
+	  const tablaBody = document.getElementById('tabla-calificaciones');
 
-      <div class="regla">
-        <h2>Regla 4: Estudiantes por Curso</h2>
-        <p>Muestra los estudiantes agrupados por cursos y tutores.</p>
-        <button onclick="mostrarRegla4()">Ver Cursos y Estudiantes</button>
-      </div>
-    </div>
-  </div>
+	  // Limpiar cualquier contenido previo
+	  tablaBody.innerHTML = '';
 
-<div id="popup" class="popup oculto">
-  <div class="popup-contenido">
-    <h3 id="titulo-popup"></h3>
-    <div id="contenido-popup"></div>
-    <button onclick="cerrarPopup()">Cerrar</button>
-  </div>
-</div>
+	  // Insertar cada fila de datos en la tabla
+	  data.forEach(({ nombres, apellidos, calificacion, observacion }) => {
+		const fila = document.createElement('tr'); // Crear fila de tabla
 
-  <script src="script_p.js"></script>
+		fila.innerHTML = `
+		  <td>${nombres}</td>
+		  <td>${apellidos}</td>
+		  <td>${calificacion}</td>
+		  <td>${observacion}</td>
+		`;
+
+		tablaBody.appendChild(fila); // Agregar la fila a la tabla
+	  });
+	}
+
+	// Ejecutar la función al cargar la página
+	document.addEventListener('DOMContentLoaded', obtenerCalificacionesLeccion);
+	</script>
 </body>
 </html>
