@@ -8,15 +8,38 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  
   <div id="login-form">
-    <p>Bienvenido al Sistema Académico 27 de Noviembre</p>
-    <img src="logo.png">
-    
-    <h1>Iniciar Sesión</h1>
-    <input type="email" id="email" placeholder="Correo electrónico" />
-    <input type="password" id="password" placeholder="Contraseña" />
-    <button id="login-btn">Iniciar Sesión</button>
+	<p>Bienvenido al Sistema Académico 27 de Noviembre</p>
+	<img src="logo.png">
+
+	<div id="loginForm" class="container">
+		<h1>Iniciar Sesión</h1>
+		<input type="email" id="email" placeholder="Correo electrónico" />
+		<input type="password" id="password" placeholder="Contraseña" />
+		<button id="login-btn">Iniciar Sesión</button>
+		<p>Representante, ¿No tiene cuenta? <a href="#" onclick="toggleForm()">Regístrese aquí</a></p>
+	</div>
+	  
+	<div id="registerForm" class="container" style="display: none;">
+		<h1>Registrarse</h1>
+		<input type="text" id="cedula_register" placeholder="Cédula" />
+		<p id="cedulaError" class="errorMessage" style="display: none; color:red;">Cédula inválida.</p>
+		
+		<input type="text" id="first_name_register" placeholder="Nombre" />
+		<p id="nombreError" class="errorMessage" style="display: none; color:red;">Nombre inválido.</p>
+		
+		<input type="text" id="last_name_register" placeholder="Apellido" />
+		<p id="apellidoError" class="errorMessage" style="display: none; color:red;">Apellido Inválido.</p>
+		
+		<input type="email" id="email_register" placeholder="Correo electrónico" />
+		<p id="emailError" class="errorMessage" style="display: none; color:red;">Email inválido.</p>
+		
+		<input type="password" id="password_register" placeholder="Contraseña" />
+		<p id="passwordError" class="errorMessage" style="display: none; color:red;">Contraseña inválida.</p>
+		
+		<button onclick="register()">Registrarse</button>
+		<p>Representante, ¿Ya tienes cuenta? <a href="#" onclick="toggleForm()">Inicie sesión aquí</a></p>
+	</div>
   </div>
 
   <div id="app"></div>
@@ -25,11 +48,148 @@
   <script src="supa.js"></script>
   <script src="spbs.js"></script>
   <script>
-    document.getElementById('login-btn').addEventListener('click', () => {
+	function toggleForm() {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
+            registerForm.style.display = registerForm.style.display === 'none' ? 'block' : 'none';
+    }
+	
+	function register() {
+            const username = document.getElementById('email_register');
+			const usernameError = document.getElementById('emailError');
+			
+            const password = document.getElementById('password_register');
+			const passwordError = document.getElementById('passwordError');
+			
+			const nombres = document.getElementById('first_name_register');
+			const nombresError = document.getElementById('nombreError');
+			
+			const apellidos = document.getElementById('last_name_register');
+			const apellidosError = document.getElementById('apellidoError');
+			
+			const cedula = document.getElementById('cedula_register');
+			const cedulaError = document.getElementById('cedulaError');
+			
+			let isValid = true;
+			if (!validateEmail(username.value)) {
+				usernameError.style.display = 'block';
+				isValid = false;
+			} else {
+				usernameError.style.display = 'none';
+			}
+
+			if (!validateName(nombres.value)) {
+			  nombresError.style.display = 'block';
+			  isValid = false;
+			} else {
+			  nombresError.style.display = 'none';
+			}
+			
+			if (!validateName(apellidos.value)) {
+			  apellidosError.style.display = 'block';
+			  isValid = false;
+			} else {
+			  apellidosError.style.display = 'none';
+			}
+
+			if (!validateId(cedula.value)) {
+			  cedulaError.style.display = 'block';
+			  isValid = false;
+			} else {
+			  cedulaError.style.display = 'none';
+			}
+			
+			if (!validatePassword(password)) {
+			  passwordError.style.display = 'block';
+			  isValid = false;
+			} else {
+			  passwordError.style.display = 'none';
+			}
+			
+			if(isValid){
+				registrarEInsertarUsuario(email, password, nombres, apellidos);
+			}
+	}
+	
+	document.getElementById('login-btn').addEventListener('click', () => {
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       login(email, password);
     });
+	
+	async function registrarEInsertarUsuario(email, password, nombres, apellidos, cedula) {
+	  try {
+		// 1. Registrar al usuario
+		const { data: { user }, error: signUpError } = await supabaseClient.auth.signUp({
+		  email: email,
+		  password: password,
+		});
+
+		if (signUpError) {
+		  console.error("Error al registrar al usuario:", signUpError);
+		  return; // O manejar el error de registro de otra forma
+		}
+
+		 if (!user) {
+			console.error("No se creo un usuario en el registro.");
+			return;
+		  }
+
+
+		// 2. Insertar en la tabla 'usuarios' usando el ID del usuario recién registrado
+		const { data, error: insertError } = await supabaseClient
+		  .from('usuarios')
+		  .insert([
+			{ cedula: cedula, nombres: nombres, apellidos: apellidos, id: user.id }, // Usamos user.id del registro
+		  ])
+		  .select();
+
+		if (insertError) {
+		  console.error("Error al insertar en la tabla usuarios:", insertError);
+		   // Opcional: Podrías considerar eliminar el usuario de auth si la inserción falla
+		   // para mantener la consistencia.  Pero esto depende de tu lógica de negocio.
+		   
+		   const { error: deleteError } = await supabase.auth.admin.deleteUser(user.id)
+			if (deleteError) {
+				console.error("Error al eliminar usuario despues del fallo de insercion", deleteError)
+			} else {
+				console.log("Usuario eliminado de auth tras fallo de insercion")
+			};
+			
+		  return; // o lanzar el error
+		}
+
+		if (data) {
+		  console.log("Usuario registrado e insertado correctamente:", data);
+		  return data;
+		}
+
+	  } catch (error) {
+		console.error("Error en la función registrarEInsertarUsuario:", error);
+	  }
+	};
+	
+	const validateEmail = (email) => {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return regex.test(email);
+    };
+
+    const validateName = (name) => {
+      const regex = /^[A-Za-z\s]+$/;
+      return regex.test(name);
+    };
+
+    const validateId = (id) => {
+      const regex = /^\d{10}$/;
+      return regex.test(id);
+    };
+	
+	const validatePassword = (password) => {
+      const regex = /^\d{10}$/;
+      return regex.test(password);
+    };
+	
   </script>
 </body>
 </html>

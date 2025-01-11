@@ -20,6 +20,17 @@ async function login(email, password) {
   }
   
 }
+async function singUp(email, password) {
+  const { data, error } = await supabaseClient.auth.signUp({
+	  email,
+	  password,
+  });
+  if (error) {
+    console.error('Error al crear cuenta de:', error.message);
+    alert('Error al crear cuenta. Revise los datos.');
+    return;
+  }
+}
 
 // Función para redirigir según el perfil
 function redirectToProfilePage(profileType) {
