@@ -122,17 +122,20 @@ console.log('Cursos obtenidos:', cursos);
       let materia_actividades_docente = await supabaseClient
         .from('Materia_Actividad_Docente')
 		.select("*")
-		
+	
       let id_materia = await supabaseClient
         .from('Curso_Materia')
 		.select("id_materia")
-		
-	  tareas = materia_actividades_docente.eq("id_materia", id_materia)
+	  const id_docente = await obtenerIdDocente();
+	  let materia_actividades = materia_actividades_docente.eq("id_materia", id_materia)
+	  let tareas = materia_actividades.eq("id_docente", id_docente)
+	  console.log(tareas);
+	  
       // Mostrar tareas en la interfaz
       const tareasDiv = document.getElementById('tareas');
       tareasDiv.style.display = 'block';
       tareasDiv.innerHTML = '<h3>Tareas Asignadas</h3>';  // Limpiar y mostrar título
-
+		
       tareas.forEach(tarea => {
         const tareaDiv = document.createElement('div');
         tareaDiv.classList.add('tarea');
