@@ -135,6 +135,7 @@ console.log('Cursos obtenidos:', cursos);
     }
       // Mostrar tareas en la interfaz
       const tareasDiv = document.getElementById('tareas');
+	  console.log(tareasDiv);
       tareasDiv.style.display = 'block';
       tareasDiv.innerHTML = '<h3>Tareas Asignadas</h3>';  // Limpiar y mostrar título
 		
@@ -151,7 +152,7 @@ console.log('Cursos obtenidos:', cursos);
       });
 
       // Mostrar formulario para crear nueva actividad
-      const crearActividadForm = tareasDiv.getElementById('crear-actividad');
+      const crearActividadForm = tareasDiv;
       crearActividadForm.style.display = 'block';
       crearActividadForm.dataset.cursoId = idCurso;
     }
