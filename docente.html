@@ -141,7 +141,7 @@ console.log('Cursos obtenidos:', cursos);
       tareas.forEach(tarea => {
         const tareaDiv = document.createElement('div');
 		console.log(tarea);
-		console.log(tarea.Actividad);
+
         tareaDiv.classList.add('tarea');
         tareaDiv.innerHTML = `
           <h4>Título ${tarea.Actividad.titulo}</h4>
@@ -151,7 +151,7 @@ console.log('Cursos obtenidos:', cursos);
       });
 
       // Mostrar formulario para crear nueva actividad
-      const crearActividadForm = document.getElementById('crear-actividad');
+      const crearActividadForm = document.getElementById("crear-actividad");
       crearActividadForm.style.display = 'block';
       crearActividadForm.dataset.cursoId = idCurso;
     }
