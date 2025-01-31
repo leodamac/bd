@@ -123,7 +123,6 @@ console.log('Cursos obtenidos:', cursos);
 			.from('Materia_Actividad_Docente')
 			.select(`
 				"Actividad" (
-					id,
 					titulo,
 					fecha
 				)
@@ -143,8 +142,8 @@ console.log('Cursos obtenidos:', cursos);
         const tareaDiv = document.createElement('div');
         tareaDiv.classList.add('tarea');
         tareaDiv.innerHTML = `
-          <h4>${tarea.actividad.titulo}</h4>
-          <p>Fecha: ${tarea.actividad.fecha}</p>
+          <h4>Título ${tarea.titulo}</h4>
+          <p>Fecha: ${tarea.fecha}</p>
         `;
         tareasDiv.appendChild(tareaDiv);
       });
