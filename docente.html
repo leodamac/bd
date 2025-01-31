@@ -53,7 +53,7 @@
   <script type="module" src="sesion.js"></script>
   <script src="spbs.js"></script>
   <script>
-  
+
 	async function obtenerIdDocente(userId) {
 	  const { data, error } = await supabaseClient
 		.from("Docente")
@@ -65,7 +65,7 @@
 		console.error("Error al obtener id_docente:", error?.message || "No se encontró el docente.");
 		return null;
 	  }
-
+		
 	  return data.id;
 	}
 	
@@ -119,22 +119,15 @@ console.log('Cursos obtenidos:', cursos);
 
     // Función para mostrar las tareas asignadas
     async function mostrarTareas(idCurso) {
-      const { data: tareas, error } = await supabaseClient
+      let materia_actividades_docente = await supabaseClient
         .from('Materia_Actividad_Docente')
-        .select(`
-          "Actividad" (
-            id,
-            titulo,
-            fecha
-          )
-        `)
-        .eq('id_materia', idCurso);  // Relaciona correctamente la materia con el curso
-
-      if (error) {
-        console.error('Error al obtener tareas:', error.message);
-        return;
-      }
-
+		.select("*")
+		
+      let id_materia = await supabaseClient
+        .from('Curso_Materia')
+		.select("id_materia")
+		
+	  tareas = materia_actividades_docente.eq("id_materia", id_materia)
       // Mostrar tareas en la interfaz
       const tareasDiv = document.getElementById('tareas');
       tareasDiv.style.display = 'block';
