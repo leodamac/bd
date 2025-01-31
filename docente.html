@@ -119,16 +119,25 @@ console.log('Cursos obtenidos:', cursos);
 
     // Función para mostrar las tareas asignadas
     async function mostrarTareas(idCurso) {
-      let materia_actividades_docente = await supabaseClient
+      let q = await supabaseClient
         .from('Materia_Actividad_Docente')
-		.select("*")
+		.select("*");
 	
       let id_materia = await supabaseClient
         .from('Curso_Materia')
-		.select("id_materia")
+		.select("id_materia");
+		
 	  const id_docente = await obtenerIdDocente();
-	  let materia_actividades = materia_actividades_docente.eq("id_materia", id_materia)
-	  let tareas = materia_actividades.eq("id_docente", id_docente)
+	  q = await q.eq("id_materia", id_materia);
+	  q = await q.eq("id_docente", id_docente);
+	  let tareas = supabaseClient
+        .from(q)
+		.select(`"Actividad" (
+            titulo,
+            calificacion,
+            observacion
+          )`)
+		.eq('id_actividad', "Actividad".'id');
 	  console.log(tareas);
 	  
       // Mostrar tareas en la interfaz
