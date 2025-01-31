@@ -20,7 +20,10 @@
     <!-- Sección de Tareas -->
     <div id="tareas" style="display: none;">
       <h3>Tareas Asignadas</h3>
-      <div id="crear-actividad">
+      <div id="lista-tareas"></div>
+    </div>
+	
+	<div id="crear-actividad" style="display: none;">
         <h3>Crear Nueva Actividad</h3>
         <label for="titulo-actividad">Título:</label>
         <input type="text" id="titulo-actividad" required>
@@ -33,8 +36,6 @@
         <br>
         <button onclick="crearActividad()">Crear Actividad</button>
       </div>
-      <div id="lista-tareas"></div>
-    </div>
 
 
     <div id="popupEstudiantes" class="popup">
