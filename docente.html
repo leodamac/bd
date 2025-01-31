@@ -140,10 +140,12 @@ console.log('Cursos obtenidos:', cursos);
 		
       tareas.forEach(tarea => {
         const tareaDiv = document.createElement('div');
+		console.log(tarea);
+		console.log(tarea.'Actividad');
         tareaDiv.classList.add('tarea');
         tareaDiv.innerHTML = `
-          <h4>Título ${tarea.titulo}</h4>
-          <p>Fecha: ${tarea.fecha}</p>
+          <h4>Título ${tarea."Actividad"."titulo"}</h4>
+          <p>Fecha: ${tarea.'Actividad'.'fecha'}</p>
         `;
         tareasDiv.appendChild(tareaDiv);
       });
